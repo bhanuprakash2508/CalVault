@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}CalVault — Calendar Lock{% endblock %}
+
+{% block body %}
+<div class="calendar-wrapper">
+  <div class="calendar-header">
+    <h1>January 2026</h1>
+    <p class="calendar-instruction">Select your dates in order to unlock</p>
+  </div>
+
+  <div class="calendar-box">
+    <div class="weekdays">
+      <div>Sun</div><div>Mon</div><div>Tue</div>
+      <div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+    </div>
+
+    <div class="days" id="days">
+      <div class="empty"></div>
+      <div class="empty"></div>
+      <div class="empty"></div>
+      <div class="empty"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const PIN_LEN = {{ pin_len }};
+  let selected  = [];
+  let verifying = false;
+
+  // Build day cells
+  const daysEl = document.getElementById('days');
+  for (let d = 1; d <= 31; d++) {
+    const div = document.createElement('div');
+    div.textContent = d;
+    div.dataset.day = d;
+    div.addEventListener('click', () => selectDate(d, div));
+    daysEl.appendChild(div);
+  }
+
+  function selectDate(day, el) {
+    if (selected.length >= PIN_LEN || verifying) return;
+    el.classList.add('selected');
+    selected.push(day);
+    if (selected.length === PIN_LEN) verify();
+  }
+
+  async function verify() {
+    verifying = true;
+    const res  = await fetch('/verify-pin', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ sequence: selected })
+    });
+    const data = await res.json();
+
+    if (data.ok) {
+      location.href = '/unlock';
+    } else {
+      // Silent reset — no message shown
+      resetSelection();
+    }
+  }
+
+  function resetSelection() {
+    selected  = [];
+    verifying = false;
+    document.querySelectorAll('.days div:not(.empty)').forEach(d => {
+      d.classList.remove('selected');
+      delete d.dataset.order;
+    });
+  }
+</script>
+{% endblock %}

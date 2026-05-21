@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}CalVault — Setup{% endblock %}
+
+{% block body %}
+<div class="centered">
+  <div class="card">
+    <div class="brand">CalVault</div>
+    <h2>Create Your Vault</h2>
+
+    {% if error %}
+    <div class="alert error show">{{ error }}</div>
+    {% endif %}
+
+    <form method="POST" autocomplete="off">
+      <label>Master PIN (2–8 dates)</label>
+      <input type="text" name="pin" placeholder="e.g. 4-9-15-22" spellcheck="false" required>
+
+      <label>Vault Password</label>
+      <div class="password-field">
+        <input type="password" name="password" id="pw1" placeholder="Strong password" required>
+        <span class="toggle-pw" onclick="togglePw('pw1',this)">👁</span>
+      </div>
+
+      <label>Confirm Vault Password</label>
+      <div class="password-field">
+        <input type="password" name="confirm" id="pw2" placeholder="Repeat password" required>
+        <span class="toggle-pw" onclick="togglePw('pw2',this)">👁</span>
+      </div>
+
+      <button type="submit" class="btn-primary">Complete Setup →</button>
+    </form>
+  </div>
+</div>
+
+<script>
+function togglePw(id, el) {
+  const inp = document.getElementById(id);
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+  el.textContent = inp.type === 'password' ? '👁' : '🙈';
+}
+</script>
+{% endblock %}

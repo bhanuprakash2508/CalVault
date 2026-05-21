@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}CalVault — Unlock{% endblock %}
+
+{% block body %}
+<div class="centered">
+  <div class="card">
+    <div class="brand">CalVault</div>
+    <h2>Enter Vault Password</h2>
+
+    {% if error %}
+    <div class="alert error show">{{ error }}</div>
+    {% endif %}
+
+    <form method="POST" autocomplete="off">
+      <div class="password-field">
+        <input type="password" name="password" id="pw" placeholder="Your vault password" autofocus required>
+        <span class="toggle-pw" onclick="togglePw(this)">👁</span>
+      </div>
+      <button type="submit" class="btn-primary">Unlock Vault →</button>
+    </form>
+
+    <p class="hint" style="margin-top:16px">
+      <a href="/calendar" style="color:#60a5fa; text-decoration:none">← Back to calendar</a>
+    </p>
+  </div>
+</div>
+
+<script>
+function togglePw(el) {
+  const inp = document.getElementById('pw');
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+  el.textContent = inp.type === 'password' ? '👁' : '🙈';
+}
+</script>
+{% endblock %}
